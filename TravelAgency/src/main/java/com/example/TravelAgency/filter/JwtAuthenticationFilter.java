@@ -1,7 +1,7 @@
 package com.example.TravelAgency.filter;
 
 import com.example.TravelAgency.service.JwtService;
-import com.example.TravelAgency.service.UserDetailsImp;
+import com.example.TravelAgency.service.UserDetailsServiceImp;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsImp userDetailsService;
+    private final UserDetailsServiceImp userDetailsService;
 
     @Override
     protected void doFilterInternal(
