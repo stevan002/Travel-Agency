@@ -34,6 +34,7 @@ public class SecurityConfig {
                         req->req.requestMatchers("/login/**","/register/**").permitAll()
                                 .requestMatchers("/profile/**").authenticated()
                                 .requestMatchers("/change-password/**").authenticated()
+                                .requestMatchers("/update-profile/**").authenticated()
                                 .anyRequest()
                                 .authenticated()
                 ).userDetailsService(userDetailsServiceImp)

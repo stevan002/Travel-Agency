@@ -1,11 +1,13 @@
 package com.example.TravelAgency.controller;
 
 import com.example.TravelAgency.model.dto.user.ChangePasswordDTO;
+import com.example.TravelAgency.model.dto.user.UpdateUserDTO;
 import com.example.TravelAgency.service.AuthenticationService;
 import com.example.TravelAgency.service.JwtService;
 import com.example.TravelAgency.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +41,18 @@ public class UserController {
             String username = jwtService.extractUsername(token);
             userService.changePassword(username, changePasswordDTO);
             return ResponseEntity.ok("Successfully changed password");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateUserDTO updateUserDTO, HttpServletRequest request){
+        try{
+            String token = authenticationService.extractTokenFromRequest(request);
+            String username = jwtService.extractUsername(token);
+            userService.updateProfile(username, updateUserDTO);
+            return ResponseEntity.ok("Successfully updated profile");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

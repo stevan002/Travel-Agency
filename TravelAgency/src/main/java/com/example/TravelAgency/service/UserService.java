@@ -2,6 +2,7 @@ package com.example.TravelAgency.service;
 
 import com.example.TravelAgency.model.User;
 import com.example.TravelAgency.model.dto.user.ChangePasswordDTO;
+import com.example.TravelAgency.model.dto.user.UpdateUserDTO;
 import com.example.TravelAgency.model.dto.user.UserProfileDTO;
 import com.example.TravelAgency.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,35 @@ public class UserService {
 
         String hashedNewPassword = passwordEncoder.encode(changePasswordDTO.getNewPassword());
         user.setPassword(hashedNewPassword);
+        userRepository.save(user);
+    }
+
+    public void updateProfile(String username, UpdateUserDTO updateUserDTO){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+
+        if (updateUserDTO.getFirstName() != null) {
+            user.setFirstName(updateUserDTO.getFirstName());
+        }
+        if (updateUserDTO.getLastName() != null) {
+            user.setLastName(updateUserDTO.getLastName());
+        }
+        if (updateUserDTO.getUsername() != null) {
+            user.setUsername(updateUserDTO.getUsername());
+        }
+        if (updateUserDTO.getAddress() != null) {
+            user.setAddress(updateUserDTO.getAddress());
+        }
+        if (updateUserDTO.getDateOfBirth() != null) {
+            user.setDateOfBirth(updateUserDTO.getDateOfBirth());
+        }
+        if (updateUserDTO.getJMBG() != null) {
+            user.setJMBG(updateUserDTO.getJMBG());
+        }
+        if (updateUserDTO.getPhoneNumber() != null) {
+            user.setPhoneNumber(updateUserDTO.getPhoneNumber());
+        }
+
         userRepository.save(user);
     }
 }
