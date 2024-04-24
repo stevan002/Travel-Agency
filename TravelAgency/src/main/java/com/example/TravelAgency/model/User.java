@@ -6,7 +6,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -23,17 +27,36 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "address", nullable = false)
+    private String address;
+
+    @Column(name = "date_birth", nullable = false)
+    private Date dateOfBirth;
+
+    @Column(name = "jmbg", unique = true, nullable = false)
+    @Size(min = 13, max = 13)
+    @Pattern(regexp="\\d{13}", message = "Number only in JMBG")
+    private String JMBG;
+
+    @Column(name = "phone_number", unique = true, nullable = false)
+    @Pattern(regexp="\\d+", message="Number only in phone number")
+    private String phoneNumber;
+
+    @Column(name = "time_reservation", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Timestamp dateOfRegistration = new Timestamp(System.currentTimeMillis());
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
