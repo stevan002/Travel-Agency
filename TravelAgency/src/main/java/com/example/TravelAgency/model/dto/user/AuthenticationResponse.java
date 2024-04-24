@@ -1,4 +1,4 @@
-package com.example.TravelAgency.model;
+package com.example.TravelAgency.model.dto.user;
 
 public class AuthenticationResponse {
 

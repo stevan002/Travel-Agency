@@ -1,16 +1,15 @@
 package com.example.TravelAgency.service;
 
-import com.example.TravelAgency.model.AuthenticationResponse;
-import com.example.TravelAgency.model.Role;
+import com.example.TravelAgency.model.dto.user.AuthenticationResponse;
+import com.example.TravelAgency.model.enums.Role;
 import com.example.TravelAgency.model.User;
 import com.example.TravelAgency.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +19,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
 
     public AuthenticationResponse register(User request){
 
@@ -70,6 +70,14 @@ public class AuthenticationService {
         String token = jwtService.generateToken(user);
 
         return new AuthenticationResponse(token);
+    }
+
+    public String extractTokenFromRequest(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);
+        }
+        throw new IllegalArgumentException("Not found JWT token in header 'Authorization'.");
     }
 
 }

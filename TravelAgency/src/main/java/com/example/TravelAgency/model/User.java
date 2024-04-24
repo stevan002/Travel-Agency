@@ -1,5 +1,6 @@
 package com.example.TravelAgency.model;
 
+import com.example.TravelAgency.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -59,6 +60,7 @@ public class User implements UserDetails {
     private Timestamp dateOfRegistration = new Timestamp(System.currentTimeMillis());
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
 
     @Override
