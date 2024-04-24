@@ -32,9 +32,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         req->req.requestMatchers("/login/**","/register/**").permitAll()
-                                .requestMatchers("/profile/**").authenticated()
-                                .requestMatchers("/change-password/**").authenticated()
-                                .requestMatchers("/update-profile/**").authenticated()
+                                .requestMatchers("/addCategory/**").hasAuthority("ADMIN")
+                                .requestMatchers("/deleteCategory/**").hasAuthority("ADMIN")
+                                .requestMatchers("/getCategory/**").hasAuthority("ADMIN")
                                 .anyRequest()
                                 .authenticated()
                 ).userDetailsService(userDetailsServiceImp)
