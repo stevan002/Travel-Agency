@@ -27,7 +27,8 @@ public class CategoryService {
     }
 
     public Category findById(Long id) {
-        return categoryRepository.findById(id).orElse(null);
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Category with ID " + id + " not found."));
     }
 
     public List<Category> findAll() {

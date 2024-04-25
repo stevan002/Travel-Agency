@@ -30,11 +30,19 @@ public class CategoryController {
 
     @GetMapping("/getCategory/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable Long id){
-        return ResponseEntity.ok(categoryService.findById(id));
+        try {
+            return ResponseEntity.ok(categoryService.findById(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/deleteCategory/{id}")
     public ResponseEntity<?> deleteCategoryById(@PathVariable Long id){
-        return ResponseEntity.ok(categoryService.deleteById(id));
+        try {
+            return ResponseEntity.ok(categoryService.deleteById(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
