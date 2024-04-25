@@ -8,6 +8,7 @@ import com.example.TravelAgency.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public UserProfileDTO getUserProfile(String username){
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
@@ -33,6 +35,7 @@ public class UserService {
         );
     }
 
+    @Transactional
     public void changePassword(String username, ChangePasswordDTO changePasswordDTO){
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
@@ -50,31 +53,20 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void updateProfile(String username, UpdateUserDTO updateUserDTO){
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found."));
 
-        if (updateUserDTO.getFirstName() != null) {
-            user.setFirstName(updateUserDTO.getFirstName());
-        }
-        if (updateUserDTO.getLastName() != null) {
-            user.setLastName(updateUserDTO.getLastName());
-        }
-        if (updateUserDTO.getUsername() != null) {
-            user.setUsername(updateUserDTO.getUsername());
-        }
-        if (updateUserDTO.getAddress() != null) {
-            user.setAddress(updateUserDTO.getAddress());
-        }
-        if (updateUserDTO.getDateOfBirth() != null) {
-            user.setDateOfBirth(updateUserDTO.getDateOfBirth());
-        }
-        if (updateUserDTO.getJMBG() != null) {
-            user.setJMBG(updateUserDTO.getJMBG());
-        }
-        if (updateUserDTO.getPhoneNumber() != null) {
-            user.setPhoneNumber(updateUserDTO.getPhoneNumber());
-        }
+        user = User.builder()
+                .firstName(updateUserDTO.getFirstName() != null ? updateUserDTO.getFirstName() : user.getFirstName())
+                .lastName(updateUserDTO.getLastName() != null ? updateUserDTO.getLastName() : user.getLastName())
+                .username(updateUserDTO.getUsername() != null ? updateUserDTO.getUsername() : user.getUsername())
+                .address(updateUserDTO.getAddress() != null ? updateUserDTO.getAddress() : user.getAddress())
+                .dateOfBirth(updateUserDTO.getDateOfBirth() != null ? updateUserDTO.getDateOfBirth() : user.getDateOfBirth())
+                .JMBG(updateUserDTO.getJMBG() != null ? updateUserDTO.getJMBG() : user.getJMBG())
+                .phoneNumber(updateUserDTO.getPhoneNumber() != null ? updateUserDTO.getPhoneNumber() : user.getPhoneNumber())
+                .build();
 
         userRepository.save(user);
     }

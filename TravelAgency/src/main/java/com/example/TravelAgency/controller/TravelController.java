@@ -1,15 +1,14 @@
 package com.example.TravelAgency.controller;
 
-import com.example.TravelAgency.model.Travel;
 import com.example.TravelAgency.model.dto.travel.CreateTravelDTO;
 import com.example.TravelAgency.service.TravelService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/travels")
 public class TravelController {
 
     private final TravelService travelService;
@@ -33,7 +32,7 @@ public class TravelController {
     }
 
     @PutMapping("/updateTravel/{id}")
-    public ResponseEntity<?> updateTravel(@RequestBody Travel travel, @PathVariable Long id) {
+    public ResponseEntity<?> updateTravel(@RequestBody CreateTravelDTO travel, @PathVariable Long id) {
         try {
             return ResponseEntity.ok(travelService.update(travel, id));
         } catch (IllegalArgumentException e){

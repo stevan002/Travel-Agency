@@ -1,6 +1,7 @@
 package com.example.TravelAgency.model;
 
 import com.example.TravelAgency.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,9 +19,9 @@ import java.util.List;
 @Table(name = "user_table")
 @Getter
 @Setter
-//@RequiredArgsConstructor
-//@NoArgsConstructor
-//@AllArgsConstructor
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id

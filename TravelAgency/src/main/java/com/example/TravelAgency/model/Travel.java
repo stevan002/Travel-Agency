@@ -2,6 +2,7 @@ package com.example.TravelAgency.model;
 
 import com.example.TravelAgency.model.enums.AccommodationUnit;
 import com.example.TravelAgency.model.enums.Vehicle;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -51,7 +52,8 @@ public class Travel {
     @Column(name = "available_seats", nullable = false)
     private int availableSeats;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 }
