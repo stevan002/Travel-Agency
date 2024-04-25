@@ -3,8 +3,7 @@ package com.example.TravelAgency.model;
 import com.example.TravelAgency.model.enums.AccommodationUnit;
 import com.example.TravelAgency.model.enums.Vehicle;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,6 +12,9 @@ import java.time.LocalDateTime;
 @Table(name = "travel")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Travel {
 
     @Id

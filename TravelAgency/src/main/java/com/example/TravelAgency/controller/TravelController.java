@@ -1,6 +1,7 @@
 package com.example.TravelAgency.controller;
 
 import com.example.TravelAgency.model.Travel;
+import com.example.TravelAgency.model.dto.travel.CreateTravelDTO;
 import com.example.TravelAgency.service.TravelService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -14,7 +15,7 @@ public class TravelController {
     private final TravelService travelService;
 
     @PostMapping("/addTravel")
-    public ResponseEntity<?> saveTravel(@RequestBody Travel travel) {
+    public ResponseEntity<?> saveTravel(@RequestBody CreateTravelDTO travel) {
         try {
             return ResponseEntity.ok(travelService.save(travel));
         } catch (IllegalArgumentException e) {

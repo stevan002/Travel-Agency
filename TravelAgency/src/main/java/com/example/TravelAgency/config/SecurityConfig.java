@@ -35,6 +35,7 @@ public class SecurityConfig {
                                 .requestMatchers("/addCategory/**").hasAuthority("ADMIN")
                                 .requestMatchers("/deleteCategory/**").hasAuthority("ADMIN")
                                 .requestMatchers("/getCategory/**").hasAuthority("ADMIN")
+                                .requestMatchers("/addTravel/**").hasAuthority("ADMIN")
                                 .anyRequest()
                                 .authenticated()
                 ).userDetailsService(userDetailsServiceImp)

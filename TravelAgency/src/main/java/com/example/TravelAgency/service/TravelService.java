@@ -2,7 +2,9 @@ package com.example.TravelAgency.service;
 
 import com.example.TravelAgency.model.Category;
 import com.example.TravelAgency.model.Travel;
+import com.example.TravelAgency.model.dto.travel.CreateTravelDTO;
 import com.example.TravelAgency.repository.TravelRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,24 +18,48 @@ public class TravelService {
     private final TravelRepository travelRepository;
     private final CategoryService categoryService;
 
-    public Travel save(Travel travel) {
-        if (travel.getVehicle() == null ||
-                travel.getAccommodationUnit() == null ||
-                travel.getDestination() == null ||
-                travel.getDepartureDateTime() == null ||
-                travel.getReturnDateTime() == null ||
-                travel.getNumberOfNights() <= 0 ||
-                travel.getPrice() == null || travel.getPrice().compareTo(BigDecimal.ZERO) <= 0 ||
-                travel.getTotalSeats() <= 0 || travel.getAvailableSeats() <= 0 ||
-                travel.getTotalSeats() <= travel.getAvailableSeats()) {
-            throw new IllegalArgumentException("Some of the travel attributes are invalid.");
+    @Transactional
+    public Travel save(CreateTravelDTO createTravel) {
+        validateTravelDTO(createTravel);
+
+        Category category = categoryService.findById(createTravel.getCategoryId());
+        if(category == null) {
+            throw new IllegalArgumentException("Category not found for id: " + createTravel.getCategoryId());
         }
 
-        Category category = categoryService.findById(travel.getCategory().getId());
-        travel.setCategory(category);
+        Travel travel = Travel.builder()
+                .vehicle(createTravel.getVehicle())
+                .accommodationUnit(createTravel.getAccommodationUnit())
+                .destination(createTravel.getDestination())
+                .departureDateTime(createTravel.getDepartureDateTime())
+                .returnDateTime(createTravel.getReturnDateTime())
+                .numberOfNights(createTravel.getNumberOfNights())
+                .price(createTravel.getPrice())
+                .totalSeats(createTravel.getTotalSeats())
+                .availableSeats(createTravel.getAvailableSeats())
+                .category(category)
+                .build();
 
         return travelRepository.save(travel);
     }
+
+    private void validateTravelDTO(CreateTravelDTO createTravel) {
+        if (createTravel == null ||
+                createTravel.getVehicle() == null ||
+                createTravel.getAccommodationUnit() == null ||
+                createTravel.getDestination() == null ||
+                createTravel.getDepartureDateTime() == null ||
+                createTravel.getReturnDateTime() == null ||
+                createTravel.getNumberOfNights() <= 0 ||
+                createTravel.getPrice() == null ||
+                createTravel.getPrice().compareTo(BigDecimal.ZERO) <= 0 ||
+                createTravel.getTotalSeats() <= 0 ||
+                createTravel.getAvailableSeats() <= 0 ||
+                createTravel.getTotalSeats() <= createTravel.getAvailableSeats()) {
+            throw new IllegalArgumentException("Some of the travel attributes are invalid.");
+        }
+    }
+
 
     public List<Travel> findAll(){
         List<Travel> travels = travelRepository.findAll();
@@ -43,6 +69,7 @@ public class TravelService {
         return travels;
     }
 
+    @Transactional
     public Travel update(Travel updatedTravel, Long id) {
         Travel existingTravel = travelRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Travel with ID " + updatedTravel.getId() + " not found."));
