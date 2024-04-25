@@ -4,7 +4,7 @@ Ova aplikacija je namenjena turističkoj agenciji kako bi olakšala upravljanje 
 Funkcionalnosti:
 
 Prijava, Odjava i Registracija
-Korisnici se mogu prijaviti na sistem koristeći svoju email adresu i lozinku.
+Korisnici se mogu prijaviti na sistem koristeći svoj username i lozinku.
 Neprijavljenim korisnicima je omogućen pristup registraciji.
 Prilikom registracije, korisnici unose osnovne informacije i kreiraju lozinku.
 Lozinka se mora uneti kroz dva polja radi potvrde.
@@ -36,10 +36,8 @@ Aktivne rezervacije mogu biti otkazane, ali ne manje od 48 sati pre početka put
 Korištene Tehnologije:
 Java
 Spring Boot
-Spring MVC
 Spring Security
-Spring JPA
-Hibernate
+Spring JPA & Hibernate
 PostgreSQL (baza podataka)
 Git (za verzioniranje koda)
 GitHub (za hosting i upravljanje kodom)
