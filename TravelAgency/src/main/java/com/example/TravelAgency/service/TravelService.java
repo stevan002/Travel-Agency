@@ -59,11 +59,12 @@ public class TravelService {
                 createTravel.getDestination() == null ||
                 createTravel.getDepartureDateTime() == null ||
                 createTravel.getReturnDateTime() == null ||
+                createTravel.getDepartureDateTime().isAfter(createTravel.getReturnDateTime().minusHours(24)) ||
                 createTravel.getPrice() == null ||
                 createTravel.getPrice().compareTo(BigDecimal.ZERO) <= 0 ||
                 createTravel.getTotalSeats() <= 0 ||
                 createTravel.getAvailableSeats() <= 0 ||
-                createTravel.getTotalSeats() <= createTravel.getAvailableSeats()) {
+                createTravel.getTotalSeats() < createTravel.getAvailableSeats()) {
             throw new IllegalArgumentException("Some of the travel attributes are invalid.");
         }
     }
@@ -73,6 +74,25 @@ public class TravelService {
     public List<GetTravelDTO> findAll() {
         // Use Stream API for concise mapping
         return travelRepository.findAll().stream()
+                .map(travel -> new GetTravelDTO(
+                        travel.getVehicle(),
+                        travel.getAccommodationUnit(),
+                        travel.getDestination(),
+                        travel.getDepartureDateTime(),
+                        travel.getReturnDateTime(),
+                        travel.getNumberOfNights(),
+                        travel.getPrice(),
+                        travel.getTotalSeats(),
+                        travel.getAvailableSeats(),
+                        travel.getCategory().getNameCategory()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetTravelDTO> findAllForUsers(LocalDateTime departureDateTime) {
+        int reservationSeats = 1;
+        // Use Stream API for concise mapping
+        return travelRepository.findByDepartureDateTimeAfterAndAvailableSeatsGreaterThanEqual(departureDateTime, reservationSeats).stream()
                 .map(travel -> new GetTravelDTO(
                         travel.getVehicle(),
                         travel.getAccommodationUnit(),

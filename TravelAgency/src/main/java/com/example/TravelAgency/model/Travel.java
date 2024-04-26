@@ -53,7 +53,6 @@ public class Travel {
     private int availableSeats;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 }

@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/travels")
@@ -22,7 +24,7 @@ public class TravelController {
         }
     }
 
-    @GetMapping("/getAllTravel")
+    @GetMapping("/getAll")
     public ResponseEntity<?> getAllTravel() {
         try {
             return ResponseEntity.ok(travelService.findAll());
