@@ -4,6 +4,7 @@ import com.example.TravelAgency.model.Category;
 import com.example.TravelAgency.model.Travel;
 import com.example.TravelAgency.model.dto.travel.CreateTravelDTO;
 import com.example.TravelAgency.model.dto.travel.GetTravelDTO;
+import com.example.TravelAgency.repository.ReservationRepository;
 import com.example.TravelAgency.repository.TravelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class TravelService {
 
     private final TravelRepository travelRepository;
     private final CategoryService categoryService;
+    private final ReservationRepository reservationRepository;
 
     @Transactional
     public Travel save(CreateTravelDTO createTravel) {
@@ -149,6 +151,9 @@ public class TravelService {
     @Transactional
     public Travel deleteTravel(Long id){
         Travel deletedTravel = findById(id);
+        if(reservationRepository.countByTravel(deletedTravel) != 0){
+            throw new IllegalArgumentException("Travel cannot be deleted, has reservations");
+        }
         travelRepository.delete(deletedTravel);
         return deletedTravel;
     }
