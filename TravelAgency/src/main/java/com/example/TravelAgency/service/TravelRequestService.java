@@ -1,11 +1,13 @@
 package com.example.TravelAgency.service;
 
+import com.example.TravelAgency.model.Reservation;
 import com.example.TravelAgency.model.Travel;
 import com.example.TravelAgency.model.TravelRequest;
 import com.example.TravelAgency.model.User;
 import com.example.TravelAgency.model.dto.request.CreateRequestDTO;
 import com.example.TravelAgency.model.dto.travel.PriceTravelDTO;
 import com.example.TravelAgency.model.enums.Role;
+import com.example.TravelAgency.repository.ReservationRepository;
 import com.example.TravelAgency.repository.TravelRepository;
 import com.example.TravelAgency.repository.TravelRequestRepository;
 import com.example.TravelAgency.repository.UserRepository;
@@ -22,10 +24,12 @@ import java.util.List;
 public class TravelRequestService {
 
     private final TravelRequestRepository travelRequestRepository;
-    private final TravelRepository travelRepository;
     private final CategoryService categoryService;
-    private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
+    private final TravelRepository travelRepository;
+    private final TravelService travelService;
+    private final ReservationRepository reservationRepository;
+    private final ReservationService reservationService;
 
     public TravelRequest createTravelRequest(CreateRequestDTO travelRequestDTO, String username) {
         if (travelRequestDTO.getDestination() == null ||
@@ -72,16 +76,15 @@ public class TravelRequestService {
         travel.setDestination(travelRequest.getDestination());
         travel.setDepartureDateTime(travelRequest.getDepartureDateTime());
         travel.setReturnDateTime(travelRequest.getReturnDateTime());
-        // Postavljanje broja noćenja (koristi se kao razlika između datuma)
         travel.setNumberOfNights((int) travelRequest.getDepartureDateTime().until(travelRequest.getReturnDateTime(), ChronoUnit.DAYS));
         travel.setTotalSeats(travelRequest.getTotalSeats());
-        travel.setAvailableSeats(travelRequest.getTotalSeats()); // Inicijalno svi sedišti su dostupni
+        travel.setAvailableSeats(travelRequest.getTotalSeats());
         travel.setCategory(categoryService.findById(priceDTO.getCategoryID()));
 
         travelRequest.setTypeUser(Role.ADMIN);
 
         travel.setPrice(priceDTO.getPrice());
-        travel.setUser(travelRequest.getCreateUser());
+        travel.setCreateFor(travelRequest.getCreateUser());
 
         travel = travelRepository.save(travel);
         travelRequestRepository.save(travelRequest);
@@ -89,10 +92,29 @@ public class TravelRequestService {
         return travel;
     }
 
-    public List<Travel> findAllResponseTravelByUserID(String username){
+    public List<Travel> findIndividualTravelsForUser(String username){
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
         return travelRepository.findAllByUser(user);
+    }
+
+    public boolean responseForNewTravel(Long travelID, String answer, String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        Travel travel = travelService.findById(travelID);
+        if(answer.equals("accept")){
+            Reservation reservation = new Reservation();
+            reservation.setTravel(travel);
+            reservation.setNumberOfPassengers(travel.getAvailableSeats());
+            reservation.setUser(user);
+            travel.setAvailableSeats(0);
+            travelRepository.save(travel);
+            reservationRepository.save(reservation);
+            return true;
+        }
+
+        travelRepository.delete(travel);
+        return false;
     }
 }
