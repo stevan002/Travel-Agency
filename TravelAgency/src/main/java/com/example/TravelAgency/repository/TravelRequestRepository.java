@@ -9,5 +9,4 @@ import java.util.List;
 
 @Repository
 public interface TravelRequestRepository extends JpaRepository<TravelRequest, Long> {
-    List<TravelRequest> findAllByTypeUser(Role userType);
 }

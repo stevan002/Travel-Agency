@@ -94,7 +94,7 @@ public class TravelService {
     public List<GetTravelDTO> findAllForUsers(LocalDateTime departureDateTime) {
         int reservationSeats = 1;
         // Use Stream API for concise mapping
-        return travelRepository.findByDepartureDateTimeAfterAndAvailableSeatsGreaterThanEqual(departureDateTime, reservationSeats).stream()
+        return travelRepository.findByDepartureDateTimeAfterAndAvailableSeatsGreaterThanEqualAndCreateForIsNull(departureDateTime, reservationSeats).stream()
                 .map(travel -> new GetTravelDTO(
                         travel.getVehicle(),
                         travel.getAccommodationUnit(),

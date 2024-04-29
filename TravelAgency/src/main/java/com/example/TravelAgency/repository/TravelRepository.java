@@ -8,6 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TravelRepository extends JpaRepository<Travel, Long> {
-    List<Travel> findByDepartureDateTimeAfterAndAvailableSeatsGreaterThanEqual(LocalDateTime departureDateTime, int availableSeats);
-    List<Travel> findAllByUser(User user);
+    List<Travel> findByDepartureDateTimeAfterAndAvailableSeatsGreaterThanEqualAndCreateForIsNull(LocalDateTime departureDateTime, int availableSeats);
+    List<Travel> findAllByCreateFor(User user);
 }

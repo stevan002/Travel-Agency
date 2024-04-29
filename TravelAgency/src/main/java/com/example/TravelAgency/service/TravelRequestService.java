@@ -88,7 +88,7 @@ public class TravelRequestService {
         travel.setCreateFor(travelRequest.getCreateUser());
 
         travel = travelRepository.save(travel);
-        travelRequestRepository.save(travelRequest);
+        travelRequestRepository.delete(travelRequest);
 
         return travel;
     }
@@ -97,7 +97,7 @@ public class TravelRequestService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return travelRepository.findAllByUser(user);
+        return travelRepository.findAllByCreateFor(user);
     }
 
     public boolean responseForNewTravel(Long travelID, String answer, String username){
