@@ -52,18 +52,21 @@ public class TravelRequestService {
                 .accommodationUnit(travelRequestDTO.getAccommodationUnit())
                 .totalSeats(travelRequestDTO.getTotalSeats())
                 .createUser(user)
-                .typeUser(Role.USER) // Setujemo ulogu na USER
                 .build();
 
         return travelRequestRepository.save(travelRequest);
     }
 
     public List<TravelRequest> getAllRequestForAdmin(){
-        return travelRequestRepository.findAllByTypeUser(Role.USER);
+        return travelRequestRepository.findAll();
     }
 
-    public List<TravelRequest> getAllResponseForUser(){
-        return travelRequestRepository.findAllByTypeUser(Role.ADMIN);
+    public TravelRequest declineRequest(Long id){
+        TravelRequest travelRequest = travelRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
+
+        travelRequestRepository.delete(travelRequest);
+        return travelRequest;
     }
 
     public Travel createTravelForUser(Long travelRequestID, PriceTravelDTO priceDTO){
@@ -80,8 +83,6 @@ public class TravelRequestService {
         travel.setTotalSeats(travelRequest.getTotalSeats());
         travel.setAvailableSeats(travelRequest.getTotalSeats());
         travel.setCategory(categoryService.findById(priceDTO.getCategoryID()));
-
-        travelRequest.setTypeUser(Role.ADMIN);
 
         travel.setPrice(priceDTO.getPrice());
         travel.setCreateFor(travelRequest.getCreateUser());
@@ -112,9 +113,12 @@ public class TravelRequestService {
             travelRepository.save(travel);
             reservationRepository.save(reservation);
             return true;
+        } else if(answer.equals("decline")){
+            travelRepository.delete(travel);
+            return false;
+        } else {
+            throw new IllegalArgumentException("Wrong answer.");
         }
 
-        travelRepository.delete(travel);
-        return false;
     }
 }

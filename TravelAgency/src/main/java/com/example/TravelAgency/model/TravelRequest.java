@@ -43,18 +43,8 @@ public class TravelRequest {
     @Column(name = "total_seats", nullable = false)
     private int totalSeats;
 
-    @Column(name = "comment_admin")
-    private String commentAdmin;
-
-    @Column(name = "approved")
-    private Boolean approved;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "create_user_id")
     private User createUser;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type_user", nullable = false)
-    private Role typeUser;
 
 }
