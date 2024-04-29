@@ -22,5 +22,4 @@ public class CreateRequestDTO {
     private Vehicle vehicle;
     private AccommodationUnit accommodationUnit;
     private int totalSeats;
-    private Role typeUser;
 }

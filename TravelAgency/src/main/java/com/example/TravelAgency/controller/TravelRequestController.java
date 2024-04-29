@@ -19,7 +19,7 @@ public class TravelRequestController {
     private final TravelRequestService travelRequestService;
 
     // FOR USER
-    @PostMapping("/createRequest")
+    @PostMapping("/user/createRequest")
     public ResponseEntity<?> createRequestForNewTravel(@RequestBody CreateRequestDTO createRequestDTO, HttpServletRequest request){
         try{
             String token = authenticationService.extractTokenFromRequest(request);
@@ -41,7 +41,7 @@ public class TravelRequestController {
     }
 
     //FOR ADMIN
-    @DeleteMapping("/request/{id}/decline")
+    @DeleteMapping("/admin/request/{id}/decline")
     public ResponseEntity<?> declineRequest(@PathVariable Long id){
         try {
             return ResponseEntity.ok(travelRequestService.declineRequest(id));
@@ -51,7 +51,7 @@ public class TravelRequestController {
     }
 
     // FOR ADMIN
-    @PostMapping("/request/{id}/createTravel")
+    @PostMapping("/admin/request/{id}/createTravel")
     public ResponseEntity<?> createNewTravel(@PathVariable Long id, @RequestBody PriceTravelDTO travelDTO){
         try {
             return ResponseEntity.ok(travelRequestService.createTravelForUser(id, travelDTO));
@@ -61,7 +61,7 @@ public class TravelRequestController {
     }
 
     // FOR USER
-    @GetMapping("/travel/bids")
+    @GetMapping("/user/travel/bids")
     public ResponseEntity<?> findTravelsBid(HttpServletRequest request){
         try {
             String token = authenticationService.extractTokenFromRequest(request);
@@ -73,7 +73,7 @@ public class TravelRequestController {
     }
 
     // FOR USER
-    @PostMapping("/travel/{id}/{answerBid}")
+    @PostMapping("/user/travel/{id}/{answerBid}")
     public ResponseEntity<?> answerBid(@PathVariable Long id, @PathVariable String answerBid, HttpServletRequest request){
         try{
             String token = authenticationService.extractTokenFromRequest(request);

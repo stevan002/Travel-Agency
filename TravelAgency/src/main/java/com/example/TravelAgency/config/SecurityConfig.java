@@ -35,6 +35,8 @@ public class SecurityConfig {
                                 .requestMatchers("/category/**").hasAuthority("ADMIN")
                                 .requestMatchers("/travels/**").hasAuthority("ADMIN")
                                 .requestMatchers("/reservation/**").hasAuthority("USER")
+                                .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                                .requestMatchers("/user/**").hasAuthority("USER")
                                 .anyRequest()
                                 .authenticated()
                 ).userDetailsService(userDetailsServiceImp)
