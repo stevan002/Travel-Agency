@@ -38,6 +38,14 @@ public class TravelService {
         LocalDateTime returnDateTime = createTravel.getReturnDateTime();
         long numberOfNights = Duration.between(departureDateTime, returnDateTime).toDays();
 
+        BigDecimal promotionalPrice = createTravel.getPrice();
+        LocalDateTime promotionalDateTime = null;
+
+        if (createTravel.getPromotionalPrice() != null && createTravel.getPromotionalDateTime() != null) {
+            promotionalPrice = createTravel.getPromotionalPrice();
+            promotionalDateTime = createTravel.getPromotionalDateTime();
+        }
+
         Travel travel = Travel.builder()
                 .vehicle(createTravel.getVehicle())
                 .accommodationUnit(createTravel.getAccommodationUnit())
@@ -46,6 +54,8 @@ public class TravelService {
                 .returnDateTime(createTravel.getReturnDateTime())
                 .numberOfNights((int) numberOfNights)
                 .price(createTravel.getPrice())
+                .promotionalPrice(promotionalPrice)
+                .promotionalDateTime(promotionalDateTime)
                 .totalSeats(createTravel.getTotalSeats())
                 .availableSeats(createTravel.getAvailableSeats())
                 .category(category)
@@ -73,39 +83,33 @@ public class TravelService {
 
 
     @Transactional(readOnly = true)
-    public List<GetTravelDTO> findAll() {
-        // Use Stream API for concise mapping
-        return travelRepository.findAll().stream()
-                .map(travel -> new GetTravelDTO(
-                        travel.getVehicle(),
-                        travel.getAccommodationUnit(),
-                        travel.getDestination(),
-                        travel.getDepartureDateTime(),
-                        travel.getReturnDateTime(),
-                        travel.getNumberOfNights(),
-                        travel.getPrice(),
-                        travel.getTotalSeats(),
-                        travel.getAvailableSeats(),
-                        travel.getCategory().getNameCategory()))
-                .collect(Collectors.toList());
+    public List<Travel> findAll() {
+        return travelRepository.findAll();
     }
 
     @Transactional(readOnly = true)
-    public List<GetTravelDTO> findAllForUsers(LocalDateTime departureDateTime) {
+    public List<GetTravelDTO> findAllForUsers(LocalDateTime currentDateTime) {
         int reservationSeats = 1;
-        // Use Stream API for concise mapping
-        return travelRepository.findByDepartureDateTimeAfterAndAvailableSeatsGreaterThanEqualAndCreateForIsNull(departureDateTime, reservationSeats).stream()
-                .map(travel -> new GetTravelDTO(
-                        travel.getVehicle(),
-                        travel.getAccommodationUnit(),
-                        travel.getDestination(),
-                        travel.getDepartureDateTime(),
-                        travel.getReturnDateTime(),
-                        travel.getNumberOfNights(),
-                        travel.getPrice(),
-                        travel.getTotalSeats(),
-                        travel.getAvailableSeats(),
-                        travel.getCategory().getNameCategory()))
+        return travelRepository.findByDepartureDateTimeAfterAndAvailableSeatsGreaterThanEqualAndCreateForIsNull(currentDateTime, reservationSeats).stream()
+                .map(travel -> {
+                    BigDecimal priceToShow = travel.getPrice();
+                    if (travel.getPromotionalDateTime() != null && travel.getPromotionalDateTime().isAfter(currentDateTime)) {
+                        priceToShow = travel.getPromotionalPrice();
+                    }
+
+                    return new GetTravelDTO(
+                            travel.getVehicle(),
+                            travel.getAccommodationUnit(),
+                            travel.getDestination(),
+                            travel.getDepartureDateTime(),
+                            travel.getReturnDateTime(),
+                            travel.getNumberOfNights(),
+                            priceToShow,
+                            travel.getTotalSeats(),
+                            travel.getAvailableSeats(),
+                            travel.getCategory().getNameCategory()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
@@ -128,6 +132,14 @@ public class TravelService {
         LocalDateTime returnDateTime = updatedTravel.getReturnDateTime() != null ? updatedTravel.getReturnDateTime() : travel.getReturnDateTime();
         long numberOfNights = Duration.between(departureDateTime, returnDateTime).toDays();
 
+        BigDecimal promotionalPrice = travel.getPromotionalPrice();
+        LocalDateTime promotionalDateTime = travel.getPromotionalDateTime();
+
+        if (updatedTravel.getPromotionalPrice() != null && updatedTravel.getPromotionalDateTime() != null) {
+            promotionalPrice = updatedTravel.getPromotionalPrice();
+            promotionalDateTime = updatedTravel.getPromotionalDateTime();
+        }
+
         travel.setVehicle(updatedTravel.getVehicle() != null ? updatedTravel.getVehicle() : travel.getVehicle());
         travel.setAccommodationUnit(updatedTravel.getAccommodationUnit() != null ? updatedTravel.getAccommodationUnit() : travel.getAccommodationUnit());
         travel.setDestination(updatedTravel.getDestination() != null ? updatedTravel.getDestination() : travel.getDestination());
@@ -135,6 +147,8 @@ public class TravelService {
         travel.setReturnDateTime(returnDateTime);
         travel.setNumberOfNights((int) numberOfNights);
         travel.setPrice(updatedTravel.getPrice() != null && updatedTravel.getPrice().compareTo(BigDecimal.ZERO) > 0 ? updatedTravel.getPrice() : travel.getPrice());
+        travel.setPromotionalPrice(promotionalPrice);
+        travel.setPromotionalDateTime(promotionalDateTime);
         travel.setTotalSeats(updatedTravel.getTotalSeats() > 0 ? updatedTravel.getTotalSeats() : travel.getTotalSeats());
         travel.setAvailableSeats(updatedTravel.getAvailableSeats() > 0 ? updatedTravel.getAvailableSeats() : travel.getAvailableSeats());
         travel.setCategory(category);

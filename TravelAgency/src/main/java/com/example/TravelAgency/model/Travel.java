@@ -46,6 +46,12 @@ public class Travel {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
+    @Column(name = "promotional_price")
+    private BigDecimal promotionalPrice;
+
+    @Column(name = "promotional_datetime")
+    private LocalDateTime promotionalDateTime;
+
     @Column(name = "total_seats", nullable = false)
     private int totalSeats;
 

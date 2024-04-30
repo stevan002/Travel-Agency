@@ -22,6 +22,8 @@ public class CreateTravelDTO {
     private LocalDateTime returnDateTime;
     private int numberOfNights;
     private BigDecimal price;
+    private BigDecimal promotionalPrice;
+    private LocalDateTime promotionalDateTime;
     private int totalSeats;
     private int availableSeats;
     private Long categoryId;
