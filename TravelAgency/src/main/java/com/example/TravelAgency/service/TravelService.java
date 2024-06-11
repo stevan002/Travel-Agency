@@ -90,11 +90,12 @@ public class TravelService {
     @Transactional(readOnly = true)
     public List<GetTravelDTO> findAllForUsers(LocalDateTime currentDateTime) {
         int reservationSeats = 1;
+
         return travelRepository.findByDepartureDateTimeAfterAndAvailableSeatsGreaterThanEqualAndCreateForIsNull(currentDateTime, reservationSeats).stream()
                 .map(travel -> {
-                    BigDecimal priceToShow = travel.getPrice();
+                    String promotional = "Regular price";
                     if (travel.getPromotionalDateTime() != null && travel.getPromotionalDateTime().isAfter(currentDateTime)) {
-                        priceToShow = travel.getPromotionalPrice();
+                        promotional = "On sale";
                     }
 
                     return new GetTravelDTO(
@@ -104,10 +105,11 @@ public class TravelService {
                             travel.getDepartureDateTime(),
                             travel.getReturnDateTime(),
                             travel.getNumberOfNights(),
-                            priceToShow,
+                            travel.getPromotionalDateTime() != null && travel.getPromotionalDateTime().isAfter(currentDateTime) ? travel.getPromotionalPrice() : travel.getPrice(),
                             travel.getTotalSeats(),
                             travel.getAvailableSeats(),
-                            travel.getCategory().getNameCategory()
+                            travel.getCategory().getNameCategory(),
+                            promotional
                     );
                 })
                 .collect(Collectors.toList());

@@ -26,4 +26,5 @@ public class GetTravelDTO {
     private int totalSeats;
     private int availableSeats;
     private ECategory category;
+    private String promotional;
 }
